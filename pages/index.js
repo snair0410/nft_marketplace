@@ -1,6 +1,7 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useContext } from 'react';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
+import { NFTContext } from '../context/NFTContext';
 
 import { CreatorCard, NFTCard, Banner } from '../components';
 // import { NFTContext } from '../context/NFTContext';
@@ -10,8 +11,8 @@ import images from '../assets';
 import { makeId } from '../utils/makeId';
 
 const Home = () => {
-  // const { fetchNFTs } = useContext(NFTContext);
-  // const [nfts, setNfts] = useState([]);
+  const { fetchNFTs } = useContext(NFTContext);
+  const [nfts, setNfts] = useState([]);
   // const [nftsCopy, setNftsCopy] = useState([]);
   // const [isLoading, setIsLoading] = useState(true);
   const [hideButtons, setHideButtons] = useState(false);
@@ -22,14 +23,14 @@ const Home = () => {
 
   const { theme } = useTheme();
 
-  // useEffect(() => {
-  //   fetchNFTs()
-  //     .then((items) => {
-  //       setNfts(items.reverse());
-  //       setNftsCopy(items);
-  //       setIsLoading(false);
-  //     });
-  // }, []);
+  useEffect(() => {
+    fetchNFTs()
+      .then((items) => {
+        setNfts(items.reverse());
+        // setNftsCopy(items);
+        // setIsLoading(false);
+      });
+  }, []);
 
   // useEffect(() => {
   //   const sortedNfts = [...nfts];
@@ -158,7 +159,8 @@ const Home = () => {
             </div>
           </div>
           <div className="mt-3 w-full flex flex-wrap justify-start md:justify-center">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
+            {nfts.map((nft) => <NFTCard key={nft.tokenId} nft={nft} />)}
+            {/* {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
               <NFTCard
                 key={`nft-${i}`}
                 nft={{
@@ -170,7 +172,7 @@ const Home = () => {
                   description: 'Cool NFT on Sale',
                 }}
               />
-            ))}
+            ))} */}
           </div>
         </div>
         )
