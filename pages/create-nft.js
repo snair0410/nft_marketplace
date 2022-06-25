@@ -1,11 +1,12 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useContext } from 'react';
 // import { create as ipfsHttpClient } from 'ipfs-http-client';
 // import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 
-// import { NFTContext } from '../context/NFTContext';
+import { useRouter } from 'next/router';
+import { NFTContext } from '../context/NFTContext';
 import { Button, Input } from '../components';
 import images from '../assets';
 
@@ -13,8 +14,11 @@ import images from '../assets';
 
 const CreateItem = () => {
   // const { createSale, isLoadingNFT } = useContext(NFTContext);
+  // eslint-disable-next-line no-unused-vars
   const [fileUrl, setFileUrl] = useState(null);
   const { theme } = useTheme();
+  const { uploadToIPFS, createNFT } = useContext(NFTContext);
+  const router = useRouter();
 
   // const uploadToInfura = async (file) => {
   //   try {
@@ -29,7 +33,8 @@ const CreateItem = () => {
   // };
 
   const onDrop = useCallback(async (acceptedFile) => {
-    // await uploadToInfura(acceptedFile[0]);
+    const url = await uploadToIPFS(acceptedFile[0]);
+    setFileUrl(url);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
@@ -142,7 +147,7 @@ const CreateItem = () => {
             btnName="Create Item"
             btnType="primary"
             classStyles="rounded-xl"
-            handleClick={() => {}}
+            handleClick={() => createNFT(formInput, fileUrl, router)}
           />
         </div>
       </div>
