@@ -45,11 +45,11 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }) => {
   );
 };
 
-const ButtonGroup = ({ setActive, router }) => {
+const ButtonGroup = ({ setActive, router, setIsOpen }) => {
   const { connectWallet, currentAccount } = useContext(NFTContext);
 
   return currentAccount ? (
-    <Button btnName="Create" classStyles="mx-2 rounded-xl" handleClick={() => { setActive(''); router.push('/create-nft'); }} />
+    <Button btnName="Create" classStyles="mx-2 rounded-xl" handleClick={() => { setActive(''); setIsOpen(false); router.push('/create-nft'); }} />
   ) : <Button btnName="Connect" classStyles="mx-2 rounded-xl" handleClick={connectWallet} />;
 };
 
@@ -173,7 +173,7 @@ const Navbar = () => {
               <MenuItems active={active} setActive={setActive} isMobile setIsOpen={setIsOpen} />
             </div>
             <div className="p-4 border-t dark:border-nft-black-1 border-nft-gray-1">
-              <ButtonGroup setActive={setActive} router={router} />
+              <ButtonGroup setActive={setActive} router={router} setIsOpen={setIsOpen} />
             </div>
           </div>
         )}
