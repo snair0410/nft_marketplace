@@ -1,40 +1,35 @@
 import { useState, useMemo, useCallback, useContext } from 'react';
-// import { create as ipfsHttpClient } from 'ipfs-http-client';
-// import { useRouter } from 'next/router';
+import { create as ipfsHttpClient } from 'ipfs-http-client';
+import { useRouter } from 'next/router';
 import { useDropzone } from 'react-dropzone';
 import Image from 'next/image';
 import { useTheme } from 'next-themes';
 
-import { useRouter } from 'next/router';
 import { NFTContext } from '../context/NFTContext';
-import { Button, Input } from '../components';
+import { Button, Input, Loader } from '../components';
 import images from '../assets';
 
-// const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
+const client = ipfsHttpClient('https://ipfs.infura.io:5001/api/v0');
 
 const CreateItem = () => {
-  // const { createSale, isLoadingNFT } = useContext(NFTContext);
-  // eslint-disable-next-line no-unused-vars
+  const { createSale, isLoadingNFT } = useContext(NFTContext);
   const [fileUrl, setFileUrl] = useState(null);
   const { theme } = useTheme();
-  const { uploadToIPFS, createNFT } = useContext(NFTContext);
-  const router = useRouter();
 
-  // const uploadToInfura = async (file) => {
-  //   try {
-  //     const added = await client.add({ content: file });
+  const uploadToInfura = async (file) => {
+    try {
+      const added = await client.add({ content: file });
 
-  //     const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
 
-  //     setFileUrl(url);
-  //   } catch (error) {
-  //     console.log('Error uploading file: ', error);
-  //   }
-  // };
+      setFileUrl(url);
+    } catch (error) {
+      console.log('Error uploading file: ', error);
+    }
+  };
 
   const onDrop = useCallback(async (acceptedFile) => {
-    const url = await uploadToIPFS(acceptedFile[0]);
-    setFileUrl(url);
+    await uploadToInfura(acceptedFile[0]);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive, isDragAccept, isDragReject } = useDropzone({
@@ -46,39 +41,39 @@ const CreateItem = () => {
   // add tailwind classes acording to the file status
   const fileStyle = useMemo(
     () => (
-      `dark:bg-nft-black-1 bg-white border dark:border-white border-nft-gray-2 flex flex-col items-center p-5 rounded-sm border-dashed
-       ${isDragActive ? ' border-file-active ' : ''}
-       ${isDragAccept ? ' border-file-accept ' : ''}
+      `dark:bg-nft-black-1 bg-white border dark:border-white border-nft-gray-2 flex flex-col items-center p-5 rounded-sm border-dashed  
+       ${isDragActive ? ' border-file-active ' : ''} 
+       ${isDragAccept ? ' border-file-accept ' : ''} 
        ${isDragReject ? ' border-file-reject ' : ''}`),
     [isDragActive, isDragReject, isDragAccept],
   );
 
-  const [formInput, setFormInput] = useState({ price: '', name: '', description: '' });
-  // const router = useRouter();
+  const [formInput, updateFormInput] = useState({ price: '', name: '', description: '' });
+  const router = useRouter();
 
-  // const createMarket = async () => {
-  //   const { name, description, price } = formInput;
-  //   if (!name || !description || !price || !fileUrl) return;
-  //   /* first, upload to IPFS */
-  //   const data = JSON.stringify({ name, description, image: fileUrl });
-  //   try {
-  //     const added = await client.add(data);
-  //     const url = `https://ipfs.infura.io/ipfs/${added.path}`;
-  //     /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
-  //     await createSale(url, formInput.price);
-  //     router.push('/');
-  //   } catch (error) {
-  //     console.log('Error uploading file: ', error);
-  //   }
-  // };
+  const createMarket = async () => {
+    const { name, description, price } = formInput;
+    if (!name || !description || !price || !fileUrl) return;
+    /* first, upload to IPFS */
+    const data = JSON.stringify({ name, description, image: fileUrl });
+    try {
+      const added = await client.add(data);
+      const url = `https://ipfs.infura.io/ipfs/${added.path}`;
+      /* after file is uploaded to IPFS, pass the URL to save it on Polygon */
+      await createSale(url, formInput.price);
+      router.push('/');
+    } catch (error) {
+      console.log('Error uploading file: ', error);
+    }
+  };
 
-  // if (isLoadingNFT) {
-  //   return (
-  //     <div className="flexCenter" style={{ height: '51vh' }}>
-  //       <Loader />
-  //     </div>
-  //   );
-  // }
+  if (isLoadingNFT) {
+    return (
+      <div className="flexCenter" style={{ height: '51vh' }}>
+        <Loader />
+      </div>
+    );
+  }
 
   return (
     <div className="flex justify-center sm:px-4 p-12">
@@ -125,21 +120,21 @@ const CreateItem = () => {
           inputType="input"
           title="Name"
           placeholder="Asset Name"
-          handleClick={(e) => setFormInput({ ...formInput, name: e.target.value })}
+          handleClick={(e) => updateFormInput({ ...formInput, name: e.target.value })}
         />
 
         <Input
           inputType="textarea"
           title="Description"
           placeholder="Asset Description"
-          handleClick={(e) => setFormInput({ ...formInput, description: e.target.value })}
+          handleClick={(e) => updateFormInput({ ...formInput, description: e.target.value })}
         />
 
         <Input
           inputType="number"
           title="Price"
           placeholder="Asset Price"
-          handleClick={(e) => setFormInput({ ...formInput, price: e.target.value })}
+          handleClick={(e) => updateFormInput({ ...formInput, price: e.target.value })}
         />
 
         <div className="mt-7 w-full flex justify-end">
@@ -147,7 +142,7 @@ const CreateItem = () => {
             btnName="Create Item"
             btnType="primary"
             classStyles="rounded-xl"
-            handleClick={() => createNFT(formInput, fileUrl, router)}
+            handleClick={createMarket}
           />
         </div>
       </div>

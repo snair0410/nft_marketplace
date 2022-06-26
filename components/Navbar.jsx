@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import { useTheme } from 'next-themes';
 import Image from 'next/image';
 import Link from 'next/link';
-import { NFTContext } from '../context/NFTContext';
 
 import images from '../assets';
+import { NFTContext } from '../context/NFTContext';
 import Button from './Button';
 
 const MenuItems = ({ isMobile, active, setActive, setIsOpen }) => {
@@ -14,7 +14,7 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }) => {
       case 0:
         return '/';
       case 1:
-        return '/listed-nfts';
+        return '/created-nfts';
       case 2:
         return '/my-nfts';
       default:
@@ -45,12 +45,29 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }) => {
   );
 };
 
-const ButtonGroup = ({ setActive, router, setIsOpen }) => {
+const ButtonGroup = ({ setActive, router }) => {
   const { connectWallet, currentAccount } = useContext(NFTContext);
 
   return currentAccount ? (
-    <Button btnName="Create" classStyles="mx-2 rounded-xl" handleClick={() => { setActive(''); setIsOpen(false); router.push('/create-nft'); }} />
-  ) : <Button btnName="Connect" classStyles="mx-2 rounded-xl" handleClick={connectWallet} />;
+    <div className="flexCenter">
+      <Button
+        btnName="Create"
+        btnType="primary"
+        classStyles="mx-2 rounded-xl"
+        handleClick={() => {
+          setActive('');
+          router.push('/create-nft');
+        }}
+      />
+    </div>
+  ) : (
+    <Button
+      btnName="Connect"
+      btnType="outline"
+      classStyles="mx-2 rounded-lg"
+      handleClick={connectWallet}
+    />
+  );
 };
 
 const checkActive = (active, setActive, router) => {
@@ -58,7 +75,7 @@ const checkActive = (active, setActive, router) => {
     case '/':
       if (active !== 'Explore NFTs') setActive('Explore NFTs');
       break;
-    case '/listed-nfts':
+    case '/created-nfts':
       if (active !== 'Listed NFTs') setActive('Listed NFTs');
       break;
     case '/my-nfts':
@@ -173,7 +190,7 @@ const Navbar = () => {
               <MenuItems active={active} setActive={setActive} isMobile setIsOpen={setIsOpen} />
             </div>
             <div className="p-4 border-t dark:border-nft-black-1 border-nft-gray-1">
-              <ButtonGroup setActive={setActive} router={router} setIsOpen={setIsOpen} />
+              <ButtonGroup setActive={setActive} router={router} />
             </div>
           </div>
         )}
