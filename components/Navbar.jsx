@@ -14,7 +14,7 @@ const MenuItems = ({ isMobile, active, setActive, setIsOpen }) => {
       case 0:
         return '/';
       case 1:
-        return '/created-nfts';
+        return '/listed-nfts';
       case 2:
         return '/my-nfts';
       default:
@@ -58,7 +58,7 @@ const checkActive = (active, setActive, router) => {
     case '/':
       if (active !== 'Explore NFTs') setActive('Explore NFTs');
       break;
-    case '/created-nfts':
+    case '/listed-nfts':
       if (active !== 'Listed NFTs') setActive('Listed NFTs');
       break;
     case '/my-nfts':
