@@ -13,14 +13,14 @@ const MyNFTs = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeSelect, setActiveSelect] = useState('Recently Added');
 
-  // useEffect(() => {
-  //   fetchMyNFTsOrCreatedNFTs('fetchMyNFTs')
-  //     .then((items) => {
-  //       setNfts(items);
-  //       setNftsCopy(items);
-  //       setIsLoading(false);
-  //     });
-  // }, []);
+  useEffect(() => {
+    fetchMyNFTsOrCreatedNFTs('fetchMyNFTs')
+      .then((items) => {
+        setNfts(items);
+        setNftsCopy(items);
+        setIsLoading(false);
+      });
+  }, []);
 
   // useEffect(() => {
   //   const sortedNfts = [...nfts];
